@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>List markers and pan to clicked items</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.0/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.0/mapbox.css' rel='stylesheet' />
+
+</head>
+<body>
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; height: 560px; width:670px; }
+  #marker-list {
+      position:absolute;
+      top:0; right:0; width:500px;
+      bottom:0;
+      overflow-x:auto;
+      background:#fff;
+      margin:0;
+      padding:5px;
+  }
+  #marker-list li {
+      padding:5px;
+      margin:0;
+      list-style-type:none;
+  }
+  #marker-list li:hover {
+      background:#eee;
+  }
+</style>
+<div id='map'></div>
+<ul id='marker-list'></ul>
+<script src="js/leafletButton.js"></script>
+
+<script>
+L.mapbox.accessToken = 'pk.eyJ1IjoicmNobmNoZiIsImEiOiJRV0pfRUZ3In0.KedtiRCPXR_H53xpm6x1og';
+  var map = L.mapbox.map('map', 'rchnchf.jd8eek4e')
+  .setView([41.8282, -96.001], 4);
+
+  var markerList = document.getElementById('marker-list');
+
+  map.featureLayer.on('ready', function(e) {
+      map.featureLayer.eachLayer(function(layer) {
+          var item = markerList.appendChild(document.createElement('li'));
+          item.innerHTML = layer.toGeoJSON().properties.title;
+          item.onclick = function() {
+             map.setView(layer.getLatLng(), 14);
+             layer.openPopup();
+          };
+      });
+
+    var btn =  L.functionButtons([{ position: 'bottomleft', content: 'Continental US' }, { content: 'Hawaii'}, { content: 'Puerto Rico'}
+      ]);
+
+
+btn.on('clicked', function(data) {
+    
+//Continental US
+    if( data.idx == 0 ) {
+        map.setView([41.8282, -96.001], 4);
+    } 
+
+//Hawaii
+    if (data.idx == 1)  {
+      map.setView([21, -157.7964], 7);
+    } 
+
+//Puerto Rico
+     if (data.idx == 2)  {
+        map.setView([18.25, -66.5], 7);
+    }  
+
+
+});
+map.addControl(btn);
+  });
+</script>
+</body>
+</html>
